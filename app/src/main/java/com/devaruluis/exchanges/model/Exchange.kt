@@ -29,4 +29,6 @@ data class Exchange(
     val description: String?,
     @SerializedName("active")
     val active: Boolean,
+    @SerializedName("last_updated")
+    val lastUpdated: String?
 )
