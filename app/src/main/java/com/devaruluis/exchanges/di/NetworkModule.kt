@@ -1,6 +1,6 @@
 package com.devaruluis.exchanges.di
 
-import com.devaruluis.exchanges.data.network.CoinPaprikaApiClient
+import com.devaruluis.exchanges.data.network.CoinApiClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,11 +15,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val COIN_PAPRIKA_URL = "https://api.coinpaprika.com/"
-
-    @Provides
-    @Named("coinPaprikaGson")
-    fun provideCoinPaprikaGson(): GsonConverterFactory = GsonConverterFactory.create()
+    private const val COIN_API_URL = "https://coinsapp-pa2.herokuapp.com/"
 
     @Singleton
     @Provides
@@ -30,22 +26,23 @@ object NetworkModule {
             .addInterceptor(logging).build()
     }
 
+    @Provides
+    @Named("coinApiGson")
+    fun provideCoinApiGson(): GsonConverterFactory = GsonConverterFactory.create()
+
     @Singleton
     @Provides
-    @Named("coinPaprikaApiRetrofit")
-    fun provideZenQuotesApiRetrofit(
-        @Named("coinPaprikaGson") gson: GsonConverterFactory,
+    @Named("coinApiRetrofit")
+    fun provideCoinApiRetrofit(
+        @Named("coinApiGson") gson: GsonConverterFactory,
         okHttpClient: OkHttpClient
-    ): Retrofit =
-        Retrofit.Builder().baseUrl(COIN_PAPRIKA_URL)
-            .addConverterFactory(gson).client(okHttpClient).build()
-
+    ): Retrofit = Retrofit.Builder().baseUrl(
+        COIN_API_URL
+    ).addConverterFactory(gson).client(okHttpClient).build()
 
     @Provides
     @Singleton
-    fun provideCoinPaprikaApiClient(@Named("coinPaprikaApiRetrofit") retrofit: Retrofit): CoinPaprikaApiClient {
-        return retrofit.create(CoinPaprikaApiClient::class.java)
+    fun provideCoinApiClient(@Named("coinApiRetrofit") retrofit: Retrofit): CoinApiClient {
+        return retrofit.create(CoinApiClient::class.java)
     }
-
-
 }
