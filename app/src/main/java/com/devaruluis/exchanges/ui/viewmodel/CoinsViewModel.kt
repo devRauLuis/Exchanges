@@ -6,9 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devaruluis.exchanges.data.network.CoinApiService
-import com.devaruluis.exchanges.data.network.CoinPaprikaService
 import com.devaruluis.exchanges.model.Coin
-import com.devaruluis.exchanges.model.Exchange
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.IOException
