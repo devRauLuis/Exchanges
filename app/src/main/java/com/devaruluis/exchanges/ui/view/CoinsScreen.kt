@@ -21,7 +21,7 @@ import com.devaruluis.exchanges.formatToCurrency
 import com.devaruluis.exchanges.ui.viewmodel.CoinsViewModel
 
 @Composable
-fun ExchangesScreen(viewModel: CoinsViewModel = hiltViewModel()) {
+fun CoinsScreenBody(viewModel: CoinsViewModel = hiltViewModel()) {
     val uiState = viewModel.uiState
 
     Column(
