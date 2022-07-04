@@ -34,4 +34,11 @@ class CoinApiService @Inject constructor(private val api: CoinApiClient) {
         }
     }
 
+    suspend fun updateCoin(id: String, coin: Coin): Coin? {
+        return withContext(Dispatchers.IO) {
+            val res = api.updateCoin(id, coin)
+            res.body()
+        }
+    }
+
 }

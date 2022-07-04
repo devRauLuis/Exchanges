@@ -17,4 +17,6 @@ interface CoinApiClient {
     @DELETE("/api/coins/{id}")
     suspend fun deleteCoin(@Path("id") id: String): Response<Coin>
 
+    @PUT("/api/coins/{id}")
+    suspend fun updateCoin(@Path("id") id: String, @Body coin: Coin): Response<Coin>
 }
