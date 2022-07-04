@@ -97,12 +97,55 @@ class CoinsViewModel @Inject constructor(val coinApiService: CoinApiService) :
         uiState = uiState.copy(type = type)
     }
 
+    fun setCoin(coin: Coin?) {
+        uiState = uiState.copy(
+            id = coin?.id,
+            name = coin?.name,
+            price = coin?.price,
+            img = coin?.img,
+            symbol = coin?.symbol,
+            isNew = coin?.isNew,
+            isActive = coin?.isActive,
+            rank = coin?.rank,
+            type = coin?.type
+        )
+    }
+
+
     fun showSnackbar(message: String) {
         uiState = uiState.copy(showSnackbar = true, snackbarMessage = message)
     }
 
     fun dismissSnackbar() {
         uiState = uiState.copy(showSnackbar = false, snackbarMessage = null)
+    }
+
+    fun update(coin: Coin) {
+        fetchJob?.cancel()
+
+        fetchJob = viewModelScope.launch {
+            try {
+                val updatedCoin = coinApiService.updateCoin(coin.id, coin)
+                setCoin(updatedCoin)
+                showSnackbar("Exito")
+            } catch (ioe: IOException) {
+                showSnackbar("Error")
+            }
+        }
+    }
+
+    fun create(coin: Coin) {
+        fetchJob?.cancel()
+
+        fetchJob = viewModelScope.launch {
+            try {
+                val newCoin = coinApiService.createCoin(coin)
+                setCoin(newCoin)
+                showSnackbar("Exito")
+            } catch (ioe: IOException) {
+                showSnackbar("Error")
+            }
+        }
     }
 
     fun save() {
@@ -118,29 +161,10 @@ class CoinsViewModel @Inject constructor(val coinApiService: CoinApiService) :
             } else if (!(coin.price != null && coin.price > 0)) {
                 showSnackbar("El precio debe ser mayor a 0")
             } else {
-                try {
-                    val newCoin = coinApiService.createCoin(coin)
-                    setCoin(newCoin)
-                    showSnackbar("Exito")
-                } catch (ioe: IOException) {
-                    showSnackbar("Error")
-                }
+                val exists = coinApiService.getCoin(coin.id) != null
+                if (exists) update(coin) else create(coin)
             }
         }
-    }
-
-    fun setCoin(coin: Coin?) {
-        uiState = uiState.copy(
-            id = coin?.id,
-            name = coin?.name,
-            price = coin?.price,
-            img = coin?.img,
-            symbol = coin?.symbol,
-            isNew = coin?.isNew,
-            isActive = coin?.isActive,
-            rank = coin?.rank,
-            type = coin?.type
-        )
     }
 
     fun find() {
