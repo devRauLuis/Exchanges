@@ -4,9 +4,11 @@ import Screen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,63 +28,58 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ExchangesTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    MainApp()
-                }
-            }
+
+            MainApp()
         }
     }
 }
 
 @Composable
 fun MainApp() {
-    val allScreens = Screen.values().toList()
-    val navController = rememberNavController()
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    var currentScreen = Screen.fromRoute(backStackEntry.value?.destination?.route)
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
+    ExchangesTheme {
+        val allScreens = Screen.values().toList()
+        val navController = rememberNavController()
+        val backStackEntry = navController.currentBackStackEntryAsState()
+        var currentScreen = Screen.fromRoute(backStackEntry.value?.destination?.route)
+        val scaffoldState = rememberScaffoldState()
+        val scope = rememberCoroutineScope()
+        val snackbarHostState = remember { SnackbarHostState() }
 
-    val toggleDrawer = {
-        scope.launch {
-            scaffoldState.drawerState.apply {
-                if (isClosed) open() else close()
+        val toggleDrawer = {
+            scope.launch {
+                scaffoldState.drawerState.apply {
+                    if (isClosed) open() else close()
+                }
             }
         }
-    }
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        drawerContent = {
-            Menu(
-                allScreens = allScreens,
-                onTabSelected = { screen ->
-                    scope.launch {
-                        navController.navigate(screen.name)
-                        scaffoldState.drawerState.apply {
-                            close()
+        Scaffold(
+            scaffoldState = scaffoldState,
+            drawerContent = {
+                Menu(
+                    allScreens = allScreens,
+                    onTabSelected = { screen ->
+                        scope.launch {
+                            navController.navigate(screen.name)
+                            scaffoldState.drawerState.apply {
+                                close()
+                            }
                         }
+                    },
+                    currentScreen = currentScreen, closeMenu = {
+                        toggleDrawer()
                     }
-                },
-                currentScreen = currentScreen, closeMenu = {
-                    toggleDrawer()
-                }
-            )
-        },
-        topBar = {
-            TopBar(
-                onMenuClick = { toggleDrawer() }
-            )
-        },
-    ) { innerPadding ->
-        MainNavHost(navController, modifier = Modifier.padding(innerPadding))
+                )
+            },
+            topBar = {
+                TopBar(
+                    onMenuClick = { toggleDrawer() }
+                )
+            },
+        ) { innerPadding ->
+            MainNavHost(navController, modifier = Modifier.padding(innerPadding))
+        }
+        SnackbarHost(hostState = snackbarHostState)
     }
-    SnackbarHost(hostState = snackbarHostState)
 }
 

@@ -24,7 +24,7 @@ fun MainNavHost(
         modifier = modifier
     ) {
         composable(Screen.Home.name) {
-            CoinsScreenBody()
+            CoinsScreenBody(navController=navController)
         }
 
         composable(
