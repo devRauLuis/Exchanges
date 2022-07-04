@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.devaruluis.exchanges.ui.viewmodel.CoinsViewModel
-import com.devaruluis.loanscompose.ui.components.form.RegistryActionButtons
 
 @Composable
 fun CoinRegistryBody(
@@ -35,6 +34,7 @@ fun CoinRegistryBody(
                 )) {
                     SnackbarResult.Dismissed -> {
                     }
+                    else -> {}
                 }
             } finally {
                 viewModel.dismissSnackbar()
@@ -62,7 +62,6 @@ fun CoinRegistryBody(
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        SnackbarHost(hostState = snackbarHostState)
         Column() {
             Text(text = "Registro", fontSize = 24.sp)
             Column(
@@ -215,15 +214,40 @@ fun CoinRegistryBody(
                     }
                 )
 
-                RegistryActionButtons(
-                    handleNewClick = {
-                        viewModel.new()
-                    },
-                    handleSaveClick = {
-                        viewModel.save()
-                    }, handleDeleteClick = {
-                        viewModel.delete()
-                    })
+                SnackbarHost(hostState = snackbarHostState)
+                val buttonModifier = Modifier.defaultMinSize(minWidth = 80.dp)
+                Card(modifier = Modifier.fillMaxWidth()) {
+
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = {
+                            viewModel.new()
+                        },
+                        modifier = buttonModifier
+                    ) {
+                        Text(text = "NUEVO")
+                    }
+                    Button(
+                        onClick = { viewModel.save() },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                        modifier = buttonModifier
+
+                    ) {
+                        Text(text = "GUARDAR")
+                    }
+                    OutlinedButton(
+                        onClick = { viewModel.delete() },
+                        modifier = buttonModifier
+                    ) {
+                        Text(text = "ELIMINAR")
+                    }
+                }
             }
         }
     }
