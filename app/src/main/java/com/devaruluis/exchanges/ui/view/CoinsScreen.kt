@@ -1,12 +1,17 @@
 package com.devaruluis.exchanges.ui.view
 
+import Screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,12 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.devaruluis.exchanges.formatToCurrency
 import com.devaruluis.exchanges.ui.viewmodel.CoinsViewModel
 
 @Composable
-fun CoinsScreenBody(viewModel: CoinsViewModel = hiltViewModel()) {
+fun CoinsScreenBody(viewModel: CoinsViewModel = hiltViewModel(), navController: NavController) {
     val uiState = viewModel.uiState
 
     Column(
@@ -38,7 +44,8 @@ fun CoinsScreenBody(viewModel: CoinsViewModel = hiltViewModel()) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp), verticalAlignment = Alignment.CenterVertically,
+                        .padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(
@@ -74,11 +81,21 @@ fun CoinsScreenBody(viewModel: CoinsViewModel = hiltViewModel()) {
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
+                        IconButton(
+                            onClick = { navController.navigate("${Screen.Registry.name}/${it.id}") },
 
+                            ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = "Go", modifier = Modifier.size(30.dp)
+                            )
+                        }
                     }
+
                 }
                 Divider(color = Color.Black)
             }
         }
     }
 }
+
